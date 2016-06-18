@@ -11,7 +11,7 @@ import static com.deveignatik.MessageBroker.LibKernel.ModelDataApp.*;
  */
 public class Broker {
 
-    static {
+    public static void init() {
         initialize();
         createTables();
     }

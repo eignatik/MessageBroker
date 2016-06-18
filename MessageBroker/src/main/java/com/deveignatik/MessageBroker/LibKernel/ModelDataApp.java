@@ -25,9 +25,9 @@ public final class ModelDataApp {
         }
         return db;
     }
-    public static Sql2o getDB(){ return db;}
+    protected static Sql2o getDB(){ return db;}
 
-    public static Connection getConnection(){
+    protected static Connection getConnection(){
         Connection connection = null;
         try {
             connection = getDB().open();
