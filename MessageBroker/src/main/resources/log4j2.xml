@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="error" >
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%-12date{HH:mm:ss} [logger_name = logger , thread_name = %-16.16t] --> msg = %msg%n"/>
+        </Console>
+        <RollingFile name="RollingFile" fileName="./logs/logtest.log"
+                     filePattern="./logs/logtest-%i.log">
+            <PatternLayout>
+                <Pattern>%-12date{HH:mm:ss} [logger_name = logger , thread_name = %-16.16t] --> msg = %msg%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <OnStartupTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="3 MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="5"/>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <Logger name="org.acwg" level="info"  additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="RollingFile" level="error"/>
+        </Logger>
+        <Root level="info" >
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="RollingFile"/>
+        </Root>
+
+    </Loggers>
+</Configuration>
