@@ -6,13 +6,14 @@ package com.deveignatik.MessageBroker.LibKernel.entities;
 public class Message {
     private long id;
     private String message;
-    private boolean sended;
     private long idtopic;
 
-    public Message(long id, String message, boolean sended, long idtopic) {
+    public Message() {
+    }
+
+    public Message(long id, String message, long idtopic) {
         this.id = id;
         this.message = message;
-        this.sended = sended;
         this.idtopic = idtopic;
     }
 
@@ -32,19 +33,20 @@ public class Message {
         this.message = message;
     }
 
-    public boolean isSended() {
-        return sended;
-    }
-
-    public void setSended(boolean sended) {
-        this.sended = sended;
-    }
-
     public long getIdtopic() {
         return idtopic;
     }
 
     public void setIdtopic(long idtopic) {
         this.idtopic = idtopic;
+    }
+
+    @Override
+    public String toString() {
+        return "Message{" +
+                "id=" + id +
+                ", message='" + message + '\''+
+                ", idtopic=" + idtopic +
+                '}';
     }
 }

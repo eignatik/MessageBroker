@@ -1,5 +1,6 @@
 package com.deveignatik.MessageBroker.LibKernel;
 
+import com.deveignatik.MessageBroker.LibKernel.entities.Client;
 import com.deveignatik.MessageBroker.LibKernel.entities.Message;
 import com.deveignatik.MessageBroker.LibKernel.entities.Topic;
 import org.sql2o.Connection;
@@ -72,11 +73,11 @@ public final class ModelDataApp {
         return true;
     }
 
-    protected static Topic createTopic(String name){
-        String query = "insert into topic (name) values(:name);";
+    protected static Topic createTopic(String title){
+        String query = "insert into topic (title) values(:title);";
         Topic res = null;
         try(Connection con =  getDB().beginTransaction()){
-            Long key = (Long) con.createQuery(query).addParameter("name", name).executeUpdate().getKey();
+            Long key = (Long) con.createQuery(query).addParameter("title", title).executeUpdate().getKey();
             con.commit();
             if(key != null){
                 res = getTopic(key);
@@ -89,7 +90,7 @@ public final class ModelDataApp {
     }
 
     protected static Message createMessage(String message, int idTopic){
-        String query = "insert into message (message, sended, idtopic) values(:message, 0, :id);";
+        String query = "insert into message (message, idtopic) values(:message, :id);";
         Message res = null;
         try(Connection con =  getDB().beginTransaction()){
             Long key = (Long) con.createQuery(query).addParameter("message", message).addParameter("id", idTopic).executeUpdate().getKey();
@@ -104,14 +105,66 @@ public final class ModelDataApp {
         return res;
     }
 
+    protected static Client createClient(String name, int topicid){
+        String query = "insert into client (fname) values(:fname, 0);";
+        Client res = null;
+        try(Connection con =  getDB().beginTransaction()){
+            Long key = (Long) con.createQuery(query).addParameter("fname", name).executeUpdate().getKey();
+            con.commit();
+            if(key != null){
+                res = getClient(key);
+            }
+            log.info("\nClient added\n");
+        } catch(Exception e){
+            log.error("Can't update TOPIC ", e);
+        }
+        return res;
+    }
     protected static List<Topic> getTopicList(){
         List<Topic> list = new ArrayList<>();
         String query = "select * from topic;";
         try(Connection con =  getDB().beginTransaction()){
             list.addAll(con.createQuery(query)
                     .addColumnMapping("id", "id")
-                    .addColumnMapping("name", "name")
+                    .addColumnMapping("title", "title")
                     .executeAndFetch(Topic.class));
+        } catch(Exception e){
+            log.error("Can't update TOPIC ", e);
+        }
+        return list;
+    }
+
+
+    protected static List<Message> getMessagesList(){
+        List<Message> list = new ArrayList<>();
+        String query = "select * from message;";
+        try(Connection con =  getDB().beginTransaction()){
+            list.addAll(con.createQuery(query)
+                    .addColumnMapping("id", "id")
+                    .addColumnMapping("message", "message")
+                    .addColumnMapping("idtopic", "idtopic")
+                    .executeAndFetch(Message.class));
+        } catch(Exception e){
+            log.error("Can't update TOPIC ", e);
+        }
+        return list;
+    }
+
+    /**
+     *
+     * @param id - id темы
+     * @return
+     */
+    protected static List<Message> getMessagesList(int id){
+        List<Message> list = new ArrayList<>();
+        String query = "select * from message where idtopic=:idtopic;";
+        try(Connection con =  getDB().beginTransaction()){
+            list.addAll(con.createQuery(query)
+                    .addParameter("idtopic",id)
+                    .addColumnMapping("id", "id")
+                    .addColumnMapping("message", "message")
+                    .addColumnMapping("idtopic", "idtopic")
+                    .executeAndFetch(Message.class));
         } catch(Exception e){
             log.error("Can't update TOPIC ", e);
         }
@@ -146,7 +199,17 @@ public final class ModelDataApp {
     protected static Message getMessage(long id){
         Message res = null;
         try(Connection con =  getDB().open()){
-            res = con.createQuery("select * from topic where id=:id").addParameter("id", id).executeAndFetchFirst(Message.class);
+            res = con.createQuery("select * from message where id=:id").addParameter("id", id).executeAndFetchFirst(Message.class);
+        } catch(Exception e){
+            log.error("Error of recieve - ", e);
+        }
+        return res;
+    }
+
+    protected static Client getClient(long id){
+        Client res = null;
+        try(Connection con =  getDB().open()){
+            res = con.createQuery("select * from client where id=:id").addParameter("id", id).executeAndFetchFirst(Client.class);
         } catch(Exception e){
             log.error("Error of recieve - ", e);
         }
@@ -155,7 +218,7 @@ public final class ModelDataApp {
 
 
     private static boolean createTableTopic(){
-        String createTopic = "create table topic(id BIGINT AUTO_INCREMENT, name VARCHAR(255));";
+        String createTopic = "create table topic(id BIGINT AUTO_INCREMENT, title VARCHAR(255));";
         boolean check = true;
         try(Connection con =  getDB().beginTransaction()){
             con.createQuery(createTopic).executeUpdate();
@@ -169,7 +232,7 @@ public final class ModelDataApp {
     }
 
     private static boolean createTableMessage(){
-        String createMessage = "create table message(id BIGINT AUTO_INCREMENT, message TEXT(255), sended TINYINT(3), idtopic INTEGER(10));";
+        String createMessage = "create table message(id BIGINT AUTO_INCREMENT, message TEXT(255), idtopic INTEGER(10));";
         boolean check = true;
         try(Connection con =  getDB().beginTransaction()){
             con.createQuery(createMessage).executeUpdate();
@@ -181,7 +244,7 @@ public final class ModelDataApp {
         return check;
     }
     private static boolean createTableClient(){
-        String createMessage = "create table client(id BIGINT AUTO_INCREMENT, name VARCHAR(30), lastmesid BIGINT);";
+        String createMessage = "create table client(id BIGINT AUTO_INCREMENT, fname VARCHAR(30));";
         boolean check = true;
         try(Connection con =  getDB().beginTransaction()){
             con.createQuery(createMessage).executeUpdate();

@@ -5,11 +5,14 @@ package com.deveignatik.MessageBroker.LibKernel.entities;
  */
 public class Topic {
     private long id;
-    private String name;
+    private String title;
 
-    public Topic(int id, String name){
+    public Topic() {
+    }
+
+    public Topic(int id, String title){
         this.id = id;
-        this.name = name;
+        this.title = title;
     }
 
     public long getId() {
@@ -20,11 +23,19 @@ public class Topic {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    @Override
+    public String toString() {
+        return "Topic{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                '}';
     }
 }

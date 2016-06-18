@@ -6,12 +6,13 @@ package com.deveignatik.MessageBroker.LibKernel.entities;
 public class Client {
     private long id;
     private String name;
-    private int lastmessageid;
 
-    public Client(long id, String name, int lastmessageid) {
+    public Client() {
+    }
+
+    public Client(long id, String name) {
         this.id = id;
         this.name = name;
-        this.lastmessageid = lastmessageid;
     }
 
     public long getId() {
@@ -30,11 +31,11 @@ public class Client {
         this.name = name;
     }
 
-    public int getLastmessageid() {
-        return lastmessageid;
-    }
-
-    public void setLastmessageid(int lastmessageid) {
-        this.lastmessageid = lastmessageid;
+    @Override
+    public String toString() {
+        return "Client{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
     }
 }
