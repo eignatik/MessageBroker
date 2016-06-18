@@ -5,6 +5,9 @@ import com.deveignatik.MessageBroker.LibKernel.entities.Topic;
 import org.sql2o.Connection;
 import org.sql2o.Sql2o;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.deveignatik.MessageBroker.Log.log;
 
 /**
@@ -25,9 +28,9 @@ public final class ModelDataApp {
         }
         return db;
     }
-    public static Sql2o getDB(){ return db;}
+    protected static Sql2o getDB(){ return db;}
 
-    public static Connection getConnection(){
+    protected static Connection getConnection(){
         Connection connection = null;
         try {
             connection = getDB().open();
@@ -51,6 +54,18 @@ public final class ModelDataApp {
 
         if(!isCreatedTableMessage()){
             if(!createTableMessage()){
+                return false;
+            }
+        }
+
+        if(!isCreatedTableClient()){
+            if(!createTableClient()){
+                return false;
+            }
+        }
+
+        if(!isCreatedTableSubscribe()){
+            if(!createTableSudscribe()){
                 return false;
             }
         }
@@ -87,6 +102,20 @@ public final class ModelDataApp {
             log.error("Can't update TOPIC ", e);
         }
         return res;
+    }
+
+    protected static List<Topic> getTopicList(){
+        List<Topic> list = new ArrayList<>();
+        String query = "select * from topic;";
+        try(Connection con =  getDB().beginTransaction()){
+            list.addAll(con.createQuery(query)
+                    .addColumnMapping("id", "id")
+                    .addColumnMapping("name", "name")
+                    .executeAndFetch(Topic.class));
+        } catch(Exception e){
+            log.error("Can't update TOPIC ", e);
+        }
+        return list;
     }
 
     protected static boolean hasTopic(int id){
@@ -151,6 +180,31 @@ public final class ModelDataApp {
         }
         return check;
     }
+    private static boolean createTableClient(){
+        String createMessage = "create table client(id BIGINT AUTO_INCREMENT, name VARCHAR(30), lastmesid BIGINT);";
+        boolean check = true;
+        try(Connection con =  getDB().beginTransaction()){
+            con.createQuery(createMessage).executeUpdate();
+            con.commit();
+        } catch(Exception e){
+            log.error("Cant create Client Table ", e);
+            check = false;
+        }
+        return check;
+    }
+
+    private static boolean createTableSudscribe(){
+        String createMessage = "create table subscribe(id BIGINT AUTO_INCREMENT, idclient INTEGER(10), idtopic INTEGER(10));";
+        boolean check = true;
+        try(Connection con =  getDB().beginTransaction()){
+            con.createQuery(createMessage).executeUpdate();
+            con.commit();
+        } catch(Exception e){
+            log.error("Cant create Subscribe Table ", e);
+            check = false;
+        }
+        return check;
+    }
     private static boolean isCreatedTableTopic(){
         boolean check = true;
         try(Connection con =  getDB().open()){
@@ -161,10 +215,31 @@ public final class ModelDataApp {
         return check;
     }
 
+
     private static boolean isCreatedTableMessage(){
         boolean check = true;
         try(Connection con =  getDB().open()){
             con.createQuery("select id from message where id=1").executeScalar(Integer.class);
+        } catch(Exception e){
+            check = false;
+        }
+        return check;
+    }
+
+    private static boolean isCreatedTableClient(){
+        boolean check = true;
+        try(Connection con =  getDB().open()){
+            con.createQuery("select id from client where id=1").executeScalar(Integer.class);
+        } catch(Exception e){
+            check = false;
+        }
+        return check;
+    }
+
+    private static boolean isCreatedTableSubscribe(){
+        boolean check = true;
+        try(Connection con =  getDB().open()){
+            con.createQuery("select id from subscribe where id=1").executeScalar(Integer.class);
         } catch(Exception e){
             check = false;
         }

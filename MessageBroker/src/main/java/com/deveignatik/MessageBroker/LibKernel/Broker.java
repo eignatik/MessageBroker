@@ -4,6 +4,10 @@ package com.deveignatik.MessageBroker.LibKernel;
 
 
 
+import com.deveignatik.MessageBroker.LibKernel.entities.Topic;
+
+import java.util.List;
+
 import static com.deveignatik.MessageBroker.LibKernel.ModelDataApp.*;
 
 /**
@@ -11,9 +15,12 @@ import static com.deveignatik.MessageBroker.LibKernel.ModelDataApp.*;
  */
 public class Broker {
 
-    static {
+    public static void init() {
         initialize();
         createTables();
+    }
+    public static List<Topic> getTopics(){
+        return getTopicList();
     }
 
     public static void subscribe(){
