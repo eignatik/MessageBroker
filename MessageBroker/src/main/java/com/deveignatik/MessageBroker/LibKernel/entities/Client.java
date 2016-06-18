@@ -37,4 +37,13 @@ public class Client {
     public void setLastmessageid(int lastmessageid) {
         this.lastmessageid = lastmessageid;
     }
+
+    @Override
+    public String toString() {
+        return "Client{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", lastmessageid=" + lastmessageid +
+                '}';
+    }
 }

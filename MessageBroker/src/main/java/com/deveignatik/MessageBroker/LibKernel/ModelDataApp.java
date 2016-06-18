@@ -1,5 +1,6 @@
 package com.deveignatik.MessageBroker.LibKernel;
 
+import com.deveignatik.MessageBroker.LibKernel.entities.Client;
 import com.deveignatik.MessageBroker.LibKernel.entities.Message;
 import com.deveignatik.MessageBroker.LibKernel.entities.Topic;
 import org.sql2o.Connection;
@@ -104,6 +105,21 @@ public final class ModelDataApp {
         return res;
     }
 
+    protected static Client createClient(String name, int topicid){
+        String query = "insert into client (name, lastmesid) values(:name, 0);";
+        Client res = null;
+        try(Connection con =  getDB().beginTransaction()){
+            Long key = (Long) con.createQuery(query).addParameter("name", name).executeUpdate().getKey();
+            con.commit();
+            if(key != null){
+                res = getClient(key);
+            }
+            log.info("\nClient added\n");
+        } catch(Exception e){
+            log.error("Can't update TOPIC ", e);
+        }
+        return res;
+    }
     protected static List<Topic> getTopicList(){
         List<Topic> list = new ArrayList<>();
         String query = "select * from topic;";
@@ -112,6 +128,45 @@ public final class ModelDataApp {
                     .addColumnMapping("id", "id")
                     .addColumnMapping("name", "name")
                     .executeAndFetch(Topic.class));
+        } catch(Exception e){
+            log.error("Can't update TOPIC ", e);
+        }
+        return list;
+    }
+
+
+    protected static List<Message> getMessagesList(){
+        List<Message> list = new ArrayList<>();
+        String query = "select * from message;";
+        try(Connection con =  getDB().beginTransaction()){
+            list.addAll(con.createQuery(query)
+                    .addColumnMapping("id", "id")
+                    .addColumnMapping("name", "name")
+                    .addColumnMapping("sended", "sended")
+                    .addColumnMapping("idtopic", "idtopic")
+                    .executeAndFetch(Message.class));
+        } catch(Exception e){
+            log.error("Can't update TOPIC ", e);
+        }
+        return list;
+    }
+
+    /**
+     *
+     * @param id - id темы
+     * @return
+     */
+    protected static List<Message> getMessagesList(int id){
+        List<Message> list = new ArrayList<>();
+        String query = "select * from message where idtopic=:idtopic;";
+        try(Connection con =  getDB().beginTransaction()){
+            list.addAll(con.createQuery(query)
+                    .addParameter("idtopic",id)
+                    .addColumnMapping("id", "id")
+                    .addColumnMapping("name", "name")
+                    .addColumnMapping("sended", "sended")
+                    .addColumnMapping("idtopic", "idtopic")
+                    .executeAndFetch(Message.class));
         } catch(Exception e){
             log.error("Can't update TOPIC ", e);
         }
@@ -146,7 +201,17 @@ public final class ModelDataApp {
     protected static Message getMessage(long id){
         Message res = null;
         try(Connection con =  getDB().open()){
-            res = con.createQuery("select * from topic where id=:id").addParameter("id", id).executeAndFetchFirst(Message.class);
+            res = con.createQuery("select * from message where id=:id").addParameter("id", id).executeAndFetchFirst(Message.class);
+        } catch(Exception e){
+            log.error("Error of recieve - ", e);
+        }
+        return res;
+    }
+
+    protected static Client getClient(long id){
+        Client res = null;
+        try(Connection con =  getDB().open()){
+            res = con.createQuery("select * from client where id=:id").addParameter("id", id).executeAndFetchFirst(Client.class);
         } catch(Exception e){
             log.error("Error of recieve - ", e);
         }

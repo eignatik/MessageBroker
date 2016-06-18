@@ -16,6 +16,6 @@ public class Main {
     public static void main(String[] args) {
         BasicConfigurator.configure();
         init();
-        System.out.println(getTopics());
+        System.out.println(getMessages(1));
     }
 }

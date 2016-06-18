@@ -47,4 +47,14 @@ public class Message {
     public void setIdtopic(long idtopic) {
         this.idtopic = idtopic;
     }
+
+    @Override
+    public String toString() {
+        return "Message{" +
+                "id=" + id +
+                ", message='" + message + '\'' +
+                ", sended=" + sended +
+                ", idtopic=" + idtopic +
+                '}';
+    }
 }

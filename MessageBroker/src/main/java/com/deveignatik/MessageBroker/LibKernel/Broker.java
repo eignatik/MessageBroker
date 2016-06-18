@@ -4,6 +4,7 @@ package com.deveignatik.MessageBroker.LibKernel;
 
 
 
+import com.deveignatik.MessageBroker.LibKernel.entities.Message;
 import com.deveignatik.MessageBroker.LibKernel.entities.Topic;
 
 import java.util.List;
@@ -21,6 +22,32 @@ public class Broker {
     }
     public static List<Topic> getTopics(){
         return getTopicList();
+    }
+
+    public static String getTopicName(int id){
+        return getTopics().get(id).getName();
+    }
+
+    public static List<Message> getMessages(){
+        return getMessagesList();
+    }
+
+    /**
+     *
+     * @param id - id сообщения в базе
+     * @return текст сообщения по id
+     */
+    public static String getMessage(int id){
+        return getMessagesList().get(id).getMessage();
+    }
+
+    /**
+     *
+     * @param idtopic id темы
+     * @return
+     */
+    public static List<Message> getMessages(int idtopic){
+        return getMessagesList(idtopic);
     }
 
     public static void subscribe(){
