@@ -70,6 +70,12 @@ public final class ModelDataApp {
                 return false;
             }
         }
+
+        if(!isCreatedTableSent()){
+            if(!createTableSent()){
+                return false;
+            }
+        }
         return true;
     }
 
@@ -105,8 +111,8 @@ public final class ModelDataApp {
         return res;
     }
 
-    protected static Client createClient(String name, int topicid){
-        String query = "insert into client (fname) values(:fname, 0);";
+    protected static Client createClient(String name){
+        String query = "insert into client (fname) values(:fname);";
         Client res = null;
         try(Connection con =  getDB().beginTransaction()){
             Long key = (Long) con.createQuery(query).addParameter("fname", name).executeUpdate().getKey();
@@ -191,6 +197,11 @@ public final class ModelDataApp {
         return res;
     }
 
+    private static boolean checkMessages(){
+
+        return false;
+    }
+
     /**
      *
      * @param id
@@ -268,6 +279,19 @@ public final class ModelDataApp {
         }
         return check;
     }
+
+    private static boolean createTableSent(){
+        String createMessage = "create table sent(id BIGINT AUTO_INCREMENT, idclient BIGINT, idmessage BIGINT);";
+        boolean check = true;
+        try(Connection con =  getDB().beginTransaction()){
+            con.createQuery(createMessage).executeUpdate();
+            con.commit();
+        } catch(Exception e){
+            log.error("Cant create Sent Table ", e);
+            check = false;
+        }
+        return check;
+    }
     private static boolean isCreatedTableTopic(){
         boolean check = true;
         try(Connection con =  getDB().open()){
@@ -303,6 +327,57 @@ public final class ModelDataApp {
         boolean check = true;
         try(Connection con =  getDB().open()){
             con.createQuery("select id from subscribe where id=1").executeScalar(Integer.class);
+        } catch(Exception e){
+            check = false;
+        }
+        return check;
+    }
+
+    private static boolean isCreatedTableSent(){
+        boolean check = true;
+        try(Connection con =  getDB().open()){
+            con.createQuery("select id from sent where id=1").executeScalar(Integer.class);
+        } catch(Exception e){
+            check = false;
+        }
+        return check;
+    }
+
+    /**
+     *
+     * @param email
+     * @param idTopic
+     * @return -1 if Error, 1 if Success
+     */
+    protected static int makeSubscribe(String email, int idTopic){
+        long idClient = 0;
+        String query = "select id from client where email=:email";
+        try(Connection con =  getDB().open()){
+            idClient = con.createQuery(query).addParameter("email", email).executeScalar(Long.class);
+        } catch(Exception e) {
+            return -1;
+        }
+
+        query = "insert into subscribe(id_topic, id_client) values(:idTopic, :idClient)";
+        try(Connection con =  getDB().open()){
+            con.createQuery(query).addParameter("idTopic", idTopic).addParameter("idClient", idClient).executeUpdate();
+            con.commit();
+        } catch(Exception e){
+            return -1;
+        }
+        return 1;
+    }
+
+    protected static boolean checkEmail(String email){
+        boolean check;
+        String eqString;
+        try(Connection con =  getDB().open()){
+            eqString = con.createQuery("select id from client where email=:email").addParameter("email", email).executeScalar(String.class);
+            if(eqString.equals(email)){
+                check = true;
+            } else {
+                check = false;
+            }
         } catch(Exception e){
             check = false;
         }

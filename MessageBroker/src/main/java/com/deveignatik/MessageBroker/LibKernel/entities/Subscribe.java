@@ -5,16 +5,16 @@ package com.deveignatik.MessageBroker.LibKernel.entities;
  */
 public class Subscribe {
     private long id;
-    private String name;
-    private int lastmesid;
+    private long idTopic;
+    private long idClient;
 
     public Subscribe() {
     }
 
-    public Subscribe(long id, String name, int lastmesid) {
+    public Subscribe(long id, long idTopic, long idClient) {
         this.id = id;
-        this.name = name;
-        this.lastmesid = lastmesid;
+        this.idTopic = idTopic;
+        this.idClient = idClient;
     }
 
     public long getId() {
@@ -25,28 +25,28 @@ public class Subscribe {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public long getIdTopic() {
+        return idTopic;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setIdTopic(long idTopic) {
+        this.idTopic = idTopic;
     }
 
-    public int getLastmesid() {
-        return lastmesid;
+    public long getIdClient() {
+        return idClient;
     }
 
-    public void setLastmesid(int lastmesid) {
-        this.lastmesid = lastmesid;
+    public void setIdClient(long idClient) {
+        this.idClient = idClient;
     }
 
     @Override
     public String toString() {
         return "Subscribe{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
-                ", lastmesid=" + lastmesid +
+                ", idTopic=" + idTopic +
+                ", idClient=" + idClient +
                 '}';
     }
 }

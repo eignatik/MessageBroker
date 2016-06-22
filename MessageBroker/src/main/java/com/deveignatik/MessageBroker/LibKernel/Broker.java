@@ -50,7 +50,22 @@ public class Broker {
         return getMessagesList(idtopic);
     }
 
-    public static void subscribe(){
+    public static boolean subscribe(String email, int idTopic){
+        registration(email);
+        if(makeSubscribe(email, idTopic)==1){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static String registration(String email){
+        if(!isEmailExist(email)){
+            createClient(email);
+        } else {
+            return "Registration failure";
+        }
+        return "registration for " + email + " successfull.";
 
     }
 
@@ -68,5 +83,10 @@ public class Broker {
 
     private static void sendNotSended(){
 
+    }
+
+    private static boolean isEmailExist(String email){
+        boolean check = checkEmail(email);
+        return check;
     }
 }
